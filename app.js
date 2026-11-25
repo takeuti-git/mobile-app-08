@@ -91,3 +91,15 @@ function showOrientation(event) {
 
     setStatus("aquired sensor data");
 }
+
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", async () => {
+        try {
+            const registration = await navigator.serviceWorker.register("./sw.js");
+            console.log("registered Service Worker");
+            console.log(registration.scope);
+        } catch (error) {
+            console.error("failed to register Service Worker", error);
+        }
+    });
+}
