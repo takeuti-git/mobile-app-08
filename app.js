@@ -2,6 +2,10 @@
 const startButton = document.getElementById("startButton");
 /** @type {HTMLParagraphElement} */
 const statusText = document.getElementById("status");
+/** @type {HTMLDivElement} */
+const bubble = document.getElementById("bubble");
+/** @type {HTMLSpanElement} */
+const levelStatus = document.getElementById("levelStatus");
 /** @param {string} text */
 const setStatus = (text) => {
     statusText.textContent = text;
@@ -53,7 +57,7 @@ function showOrientation(event) {
     const beta  = event.beta;
     const gamma = event.gamma;
 
-    if (alpha === null || beta === null || gamma === null) {
+    if (beta === null || gamma === null) {
         setStatus("cannot acquire sensor data");
         return;
     }
@@ -61,6 +65,29 @@ function showOrientation(event) {
     document.getElementById("alpha").textContent = norm_degree(alpha);
     document.getElementById("beta").textContent  = norm_degree(beta);
     document.getElementById("gamma").textContent = norm_degree(gamma);
+
+    let x = gamma * 2;
+    let y = beta * 2;
+
+    const distance = Math.sqrt(x * x + y * y);
+    const maxDistance = 100;
+
+    if (distance > maxDistance) {
+        x = x * maxDistance / distance;
+        y = y * maxDistance / distance;
+    }
+
+    bubble.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+
+    const isLevel = Math.abs(beta) <= 3 && Math.abs(gamma) <= 3;
+
+    if (isLevel) {
+        bubble.classList.add("level-ok");
+        levelStatus.textContent = "水平です";
+    } else {
+        bubble.classList.remove("level-ok");
+        levelStatus.textContent = "傾いています";
+    }
 
     setStatus("aquired sensor data");
 }
